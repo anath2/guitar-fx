@@ -3,8 +3,7 @@
  */
 
 #include <stdio.h>
-# include "portaudio.h"
-
+#include "portaudio.h"
 
 #define SAMPLE_RATE    (44100)
 #define NUM_CHANNELS   (2)
