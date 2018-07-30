@@ -6,7 +6,7 @@ int main()
     CU_get_error();
   }
 
-  if (setupBankTestSuite() == -1) {
+  if (setupPortAudioSuite() == -1) {
     CU_cleanup_registry();
     return CU_get_error();
   }
