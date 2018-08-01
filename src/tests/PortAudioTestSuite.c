@@ -1,6 +1,9 @@
 #include <CUnit/Basic.h>
 #include "portaudio.h"
 
+/* Defining sample rate for audio processing */
+#define SAMPLE_RATE (44100)
+
 /* Exploratory tests for port audio */
 int setupPortAudioSuite(void)
 {
@@ -70,6 +73,21 @@ void testSawTooth(void)
       }
     return 0;
   }
+
+  /* Initialize port audio */
+  err = Pa_Initialize();
+  if(err != paNoError) goto error;
+
+
+
+
+
+  /* Terminate port audio */
+  err = Pa_Terminate();
+  if(err != paNoError) {
+    printf("PortAudio error %s\n", Pa_GetErrorText(err));
+  }
+
 
   /* Generate a saw tooth wave using port audio */
 }
