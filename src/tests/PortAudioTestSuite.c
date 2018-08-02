@@ -4,6 +4,9 @@
 /* Defining sample rate for audio processing */
 #define SAMPLE_RATE (44100)
 
+/* Defining number of seconds for recording  */
+#define NUM_SECONDS (5)
+
 /* Exploratory tests for port audio */
 int setupPortAudioSuite(void)
 {
@@ -78,7 +81,31 @@ void testSawTooth(void)
   err = Pa_Initialize();
   if(err != paNoError) goto error;
 
+  static PaTestData data;
 
+  paStream *stream;
+  PaError err;
+
+  err = PaOpenDefaultStream( &stream,
+			     0,           /* no input channel */
+			     2,           /* stereo ouput */
+			     paFloat32,   /* 32 bit floating point output */
+			     SAMPLE_RATE,
+			     256,         /* Frames per buffer */
+			     paTestCallback,
+			     &data );
+  if (err != paNoError) goto error;
+
+  /* Start stream */
+  err = Pa_StartStream( stream );
+  if (err != paNoError) goto error;
+
+  /*Sleep */
+  Pa_Sleep(NUM_SECONDS * 1000);
+
+  /* Stop stream */
+  err = Pa_StopStream(stream);
+  if (err != paNoError) goto error;
 
 
 
