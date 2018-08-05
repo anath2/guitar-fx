@@ -1,4 +1,5 @@
 #include <CUnit/Basic.h>
+#include <math.h>
 #include "portaudio.h"
 
 /* Defining sample rate for audio processing */
@@ -6,6 +7,47 @@
 
 /* Defining number of seconds for recording  */
 #define NUM_SECONDS (5)
+
+/* Define data structure for port audio data */
+typedef struct
+{
+  float left_phase;
+  float right_phase;
+}
+paTestData;
+
+
+/* Defining callback function for generating a sawtooth wave */
+int paTestCallback(
+   cont void *inputBuffer,
+   void *outputBuffer,
+   unsigned long framesPerBuffer,
+   const PaStreamCallbackTimeInfo *timeinfo,
+   PaStreamCallbackFlags statusFlags,
+   void *userData
+)
+{
+   paTestData *data = (paTestData *) userData;
+   float *out = (float *) outputBuffer;
+   unsigned int i;
+   (void) inputBuffer; // Prevent unused variable warning
+
+   for(i=0; i<framesPerBuffer; i++)
+   {
+     *out++ = data->left_phase;
+     *out++ = data->right_phase;
+
+     data->left_phase += 0.01f;
+     if (data->left_phase >= 1.0f) data -= 2.0f;
+
+     data->right_phase += 0.03f;
+     if (data->right_phase >= 1.0f) data -= 2.0f;
+   }
+   return 0;
+}
+
+
+
 
 /* Exploratory tests for port audio */
 int setupPortAudioSuite(void)
@@ -15,7 +57,7 @@ int setupPortAudioSuite(void)
 
   if (NULL == pSuite) {
     return -1;
-  }
+ }
 
   if ((NULL == CU_add_test(pSuite, "Test generate signal with port audio", testSawTooth))) {
       return -1;
@@ -42,40 +84,7 @@ void testSawTooth(void)
 {
   // Defining test data structure
 
-  typedef struct
-  {
-    float left_phase;
-    float right_phase;
-  }
-  paTestData;
 
-  int paTestCallback(
-		     cont void *inputBuffer,
-		     void *outputBuffer,
-		     unsigned long framesPerBuffer,
-		     const PaStreamCallbackTimeInfo *timeinfo,
-		     PaStreamCallbackFlags statusFlags,
-		     void *userData
-		     )
-  {
-    paTestData *data = (paTestData *) userData;
-    float *out = (float *) outputBuffer;
-    unsigned int i;
-    (void) inputBuffer; // Prevent unused variable warning
-
-    for(i=0; i<framesPerBuffer; i++)
-      {
-	*out++ = data->left_phase;
-	*out++ = data->right_phase;
-
-	data->left_phase += 0.01f;
-	if (data->left_phase >= 1.0f) data -= 2.0f;
-
-	data->right_phase += 0.03f;
-	if (data->right_phase >= 1.0f) data -= 2.0f;
-      }
-    return 0;
-  }
 
   /* Initialize port audio */
   err = Pa_Initialize();
@@ -104,7 +113,7 @@ void testSawTooth(void)
   Pa_Sleep(NUM_SECONDS * 1000);
 
   /* Stop stream */
-  err = Pa_StopStream(stream);
+  err = Pa_StopStream( stream );
   if (err != paNoError) goto error;
 
 
