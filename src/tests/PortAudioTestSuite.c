@@ -125,5 +125,13 @@ void testSawTooth(void)
   }
 
 
-  /* Generate a saw tooth wave using port audio */
+  /* Error */
+
+ error:
+  Pa_Terminate();
+  printf( stderr, "An error occured while using the portaudio stream\n" );
+  printf( stderr, "Error number: %d\n", err );
+  printf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
+  return err;
+
 }
