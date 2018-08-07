@@ -16,7 +16,6 @@ typedef struct
 }
 paTestData;
 
-
 /* Defining callback function for generating a sawtooth wave */
 int paTestCallback(
    cont void *inputBuffer,
@@ -46,54 +45,34 @@ int paTestCallback(
    return 0;
 }
 
-
-
-
 /* Exploratory tests for port audio */
-int setupPortAudioSuite(void)
+int getPortAudioSuite(void)
 {
   CU_pSuite pSuite = NULL;
-  pSuite = CU_add_suite("Port Audio Test Suite", initPortAudioTestSuite, cleanPortAudioTestSuite);
+  pSuite = CU_add_suite("Port Audio Exploration", testSawTooth);
 
-  if (NULL == pSuite) {
+  if (NULL == pSuite)
+  {
     return -1;
- }
-
-  if ((NULL == CU_add_test(pSuite, "Test generate signal with port audio", testSawTooth))) {
-      return -1;
   }
-
-  return 0;
-
-}
-
-
-int initPortAudioTestSuite(void)
-{
   return 0;
 }
-
-
-int cleanPortAudioTestSuite(void)
-{
-  return 0;
-}
-
 
 void testSawTooth(void)
 {
-  // Defining test data structure
 
+  static paTestData data;
+  PaStream *stream;
+  PaError err;
 
+  printf('Testing generating sawtooth wave');
+
+  /* Initialize data */
+  data.left_phase = data.right_phase = 0.0;
 
   /* Initialize port audio */
   err = Pa_Initialize();
   if(err != paNoError) goto error;
-
-  static PaTestData data;
-
-  paStream *stream;
-  PaError err;
 
   err = PaOpenDefaultStream( &stream,
 			     0,           /* no input channel */
@@ -115,15 +94,14 @@ void testSawTooth(void)
   /* Stop stream */
   err = Pa_StopStream( stream );
   if (err != paNoError) goto error;
-
-
+  err = Pa_CloseStream( stream );
+  if (err != paNoError) goto error;
 
   /* Terminate port audio */
   err = Pa_Terminate();
   if(err != paNoError) {
     printf("PortAudio error %s\n", Pa_GetErrorText(err));
   }
-
 
   /* Error */
 
