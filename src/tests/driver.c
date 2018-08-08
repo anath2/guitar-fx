@@ -1,5 +1,6 @@
-#include <CUNit/Basic>
+#include <CUnit/Basic.h>
 
+int getPortAudioSuite(void);
 
 int run_all_tests()
 {
