@@ -1,16 +1,14 @@
-#include <CUnit/Basic.h>
+#include "gtest/gtest.h"
 
-int getPortAudioSuite(void);
-
-int run_all_tests()
+double square_root (double x)
 {
-  CU_pSuite pSuite = NULL;
-  pSuite = getPortAudioSuite();
-  CU_automated_run_tests();
+  return (x * x);
 }
 
+TEST (SquareRootTest, PositiveNos) {
+    EXPECT_EQ (9, square_root (3));
+}
 
-int main()
-{
-  run_all_tests();
+int main() {
+  return RUN_ALL_TESTS();
 }
